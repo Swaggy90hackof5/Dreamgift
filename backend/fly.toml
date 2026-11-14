@@ -1,0 +1,21 @@
+# Alternative host: Fly.io.  fly launch --no-deploy --copy-config  &&  fly volumes create dreamgift_data --size 1 --region bom
+# then: fly secrets set RAZORPAY_KEY_ID=... RAZORPAY_KEY_SECRET=... RAZORPAY_WEBHOOK_SECRET=... ADMIN_KEY=... SUPPORT_EMAIL=...  &&  fly deploy
+app = "dreamgift-change-me"
+primary_region = "bom"
+
+[build]
+
+[env]
+  PORT = "3000"
+  DATA_DIR = "/data"
+  SETTLEMENT_MODE = "route"
+
+[http_service]
+  internal_port = 3000
+  force_https = true
+  auto_stop_machines = "off"
+  min_machines_running = 1
+
+[mounts]
+  source = "dreamgift_data"
+  destination = "/data"

@@ -1,0 +1,270 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{{COUPLE}}'s Dream Wishlist</title>
+<meta name="description" content="Skip the mixer. Help {{COUPLE}} reach their dreams instead.">
+<meta property="og:title" content="{{COUPLE}}'s Dream Wishlist 💍">
+<meta property="og:description" content="Skip the mixer. Gift a dream instead: honeymoon, first home, and more.">
+<meta property="og:type" content="website">
+<meta name="theme-color" content="#9C2A4A">
+<style>
+  :root{--rose:#9C2A4A;--gold:#FFD27A;--cream:#FFF8F2;--ink:#241A1C;--muted:#6d5a60;--card:#fff;--line:#eddcd7}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--cream);color:var(--ink);font:16px/1.45 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+  .wrap{max-width:560px;margin:0 auto;padding:16px 16px 56px}
+  .hero{background:var(--rose);color:#fff;border-radius:20px;padding:22px}
+  .hero h1{margin:0 0 4px;font-size:1.45rem}
+  .hero p{margin:0;opacity:.88}
+  .raised{font-size:2.2rem;font-weight:800;color:var(--gold);margin-top:16px}
+  .bar{height:8px;border-radius:99px;background:#e9d6d0;overflow:hidden}
+  .hero .bar{background:rgba(255,255,255,.25);margin-top:10px}
+  .bar>i{display:block;height:100%;background:var(--rose);border-radius:99px;transition:width .6s}
+  .hero .bar>i{background:var(--gold)}
+  h2{font-size:1.05rem;margin:26px 0 10px}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px;margin-bottom:10px}
+  .dream{display:flex;gap:12px;align-items:center;cursor:pointer}
+  .dream.sel{border-color:var(--rose);box-shadow:0 0 0 2px rgba(156,42,74,.15)}
+  .dream .em{font-size:1.9rem}
+  .dream .t{font-weight:700}
+  .dream .s{color:var(--muted);font-size:.88rem}
+  .dream .pct{margin-left:auto;font-weight:800;color:var(--rose)}
+  .grow{flex:1;min-width:0}
+  label{display:block;font-weight:600;font-size:.9rem;margin:14px 0 6px}
+  input,select,textarea{width:100%;font:inherit;padding:12px;border:1px solid #d9c3bd;border-radius:12px;background:#fff;color:var(--ink)}
+  textarea{resize:vertical;min-height:64px}
+  .chips{display:flex;gap:8px;flex-wrap:wrap}
+  .chip{border:1px solid #d9c3bd;background:#fff;border-radius:99px;padding:8px 14px;font:inherit;cursor:pointer}
+  .chip.on{background:var(--rose);color:#fff;border-color:var(--rose)}
+  button.pay{width:100%;margin-top:18px;padding:15px;border:0;border-radius:14px;background:var(--rose);color:#fff;font:inherit;font-weight:700;font-size:1.05rem;cursor:pointer}
+  button.alt{width:100%;margin-top:10px;padding:13px;border:1.5px solid var(--rose);border-radius:14px;background:#fff;color:var(--rose);font:inherit;font-weight:700;cursor:pointer}
+  button:disabled{opacity:.55;cursor:default}
+  .note{color:var(--muted);font-size:.85rem;margin-top:8px}
+  .err{background:#fde8e8;color:#8a1c1c;border-radius:12px;padding:10px 12px;margin-top:12px;display:none}
+  .ok{background:#e6f5ea;color:#17592b;border-radius:12px;padding:14px;margin-top:12px;display:none}
+  .wall .who{font-weight:700}
+  .wall .amt{float:right;font-weight:800;color:var(--rose)}
+  .wall .msg{margin-top:4px}
+  .wall .meta{color:var(--muted);font-size:.82rem}
+  .upibox{background:#faf0ec;border-radius:12px;padding:12px;margin-top:10px;display:none;word-break:break-all}
+  footer{margin-top:30px;text-align:center;color:var(--muted);font-size:.8rem}
+  footer a{color:var(--muted)}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="hero">
+    <h1 id="couple">{{COUPLE}}</h1>
+    <p>No more mixers. Gift a dream instead. 💍</p>
+    <div class="raised" id="raised">₹0</div>
+    <div id="goal" style="opacity:.88">raised so far</div>
+    <div class="bar"><i id="totalbar" style="width:0%"></i></div>
+  </div>
+
+  <h2>Their dreams</h2>
+  <div id="dreams"></div>
+
+  <h2>Send a gift</h2>
+  <div class="card">
+    <label for="dreamSel">Which dream?</label>
+    <select id="dreamSel"></select>
+
+    <label>Amount</label>
+    <div class="chips" id="chips"></div>
+    <input id="amount" inputmode="numeric" placeholder="Or type any amount in ₹" style="margin-top:10px" maxlength="6">
+
+    <label for="guest">Your name</label>
+    <input id="guest" maxlength="60" autocomplete="name">
+
+    <label for="message">Blessing for the couple (optional)</label>
+    <textarea id="message" maxlength="200"></textarea>
+
+    <button class="pay" id="payOnline" style="display:none">Pay securely (UPI / card / netbanking)</button>
+    <button class="alt" id="payUpi">Pay with my UPI app</button>
+    <div class="note" id="upiNote"></div>
+    <div class="upibox" id="upibox"></div>
+
+    <div class="err" id="err"></div>
+    <div class="ok" id="ok"></div>
+  </div>
+
+  <h2>Blessings &amp; gifts</h2>
+  <div class="wall" id="wall"></div>
+
+  <footer>Powered by {{APP_NAME}} · <a href="/privacy">Privacy</a></footer>
+</div>
+
+<script src="https://checkout.razorpay.com/v1/checkout.js" defer></script>
+<script>
+(function () {
+  var SLUG = "{{SLUG}}";
+  var state = null, selected = null, busy = false;
+  var $ = function (id) { return document.getElementById(id); };
+  var inr = function (n) { return "₹" + Number(n).toLocaleString("en-IN"); };
+  var pctOf = function (a, b) { return b > 0 ? Math.min(100, Math.round(a * 100 / b)) : 0; };
+
+  function el(tag, cls, text) {
+    var e = document.createElement(tag);
+    if (cls) e.className = cls;
+    if (text !== undefined) e.textContent = text;
+    return e;
+  }
+
+  function showErr(msg) { var e = $("err"); e.textContent = msg; e.style.display = msg ? "block" : "none"; $("ok").style.display = "none"; }
+  function showOk(msg) { var e = $("ok"); e.textContent = msg; e.style.display = "block"; $("err").style.display = "none"; }
+
+  function api(method, path, body) {
+    return fetch(path, {
+      method: method,
+      headers: { "Content-Type": "application/json" },
+      body: body ? JSON.stringify(body) : undefined
+    }).then(function (r) {
+      return r.json().catch(function () { return {}; }).then(function (j) {
+        if (!r.ok) throw new Error(j.error || "Something went wrong");
+        return j;
+      });
+    });
+  }
+
+  function render() {
+    if (!state) return;
+    $("raised").textContent = inr(state.totalRaised);
+    $("goal").textContent = "raised of " + inr(state.totalGoal);
+    $("totalbar").style.width = pctOf(state.totalRaised, state.totalGoal) + "%";
+
+    var list = $("dreams");
+    list.textContent = "";
+    state.dreams.forEach(function (d) {
+      var card = el("div", "card dream" + (d.id === selected ? " sel" : ""));
+      card.appendChild(el("div", "em", d.emoji));
+      var mid = el("div", "grow");
+      mid.appendChild(el("div", "t", d.title));
+      mid.appendChild(el("div", "s", inr(d.raised) + " of " + inr(d.target)));
+      var bar = el("div", "bar"); bar.style.marginTop = "8px";
+      var fill = document.createElement("i"); fill.style.width = pctOf(d.raised, d.target) + "%";
+      bar.appendChild(fill); mid.appendChild(bar);
+      card.appendChild(mid);
+      card.appendChild(el("div", "pct", pctOf(d.raised, d.target) + "%"));
+      card.onclick = function () { selected = d.id; $("dreamSel").value = String(d.id); render(); };
+      list.appendChild(card);
+    });
+
+    var sel = $("dreamSel"), prev = sel.value;
+    var sig = state.dreams.map(function (d) { return d.id + d.title; }).join("|");
+    if (sel.getAttribute("data-sig") !== sig) {
+      sel.textContent = "";
+      state.dreams.forEach(function (d) {
+        var o = document.createElement("option");
+        o.value = String(d.id); o.textContent = d.emoji + " " + d.title;
+        sel.appendChild(o);
+      });
+      sel.setAttribute("data-sig", sig);
+      if (prev && state.dreams.some(function (d) { return String(d.id) === prev; })) sel.value = prev;
+    }
+    if (selected === null && state.dreams.length) { selected = state.dreams[0].id; sel.value = String(selected); }
+
+    $("payOnline").style.display = state.onlinePayments ? "block" : "none";
+    $("upiNote").textContent = state.onlinePayments
+      ? "Secure payment is confirmed instantly. \"Pay with my UPI app\" sends money straight to the couple, who then confirm it."
+      : "Opens your UPI app (GPay, PhonePe, Paytm...) to pay the couple directly. They'll confirm it once received.";
+
+    var wall = $("wall");
+    wall.textContent = "";
+    if (!state.contributions.length) {
+      wall.appendChild(el("div", "note", "Be the first to send a blessing."));
+    }
+    state.contributions.forEach(function (c) {
+      var card = el("div", "card");
+      var top = el("div");
+      top.appendChild(el("span", "amt", inr(c.amount)));
+      top.appendChild(el("span", "who", c.guest));
+      card.appendChild(top);
+      var dream = state.dreams.filter(function (d) { return d.id === c.dreamId; })[0];
+      card.appendChild(el("div", "meta", (dream ? dream.emoji + " " + dream.title + " · " : "") + new Date(c.createdAt).toLocaleDateString("en-IN", { day: "numeric", month: "short" })));
+      if (c.message) card.appendChild(el("div", "msg", "“" + c.message + "”"));
+      wall.appendChild(card);
+    });
+  }
+
+  function refresh() {
+    return api("GET", "/api/r/" + SLUG).then(function (s) { state = s; render(); }).catch(function () {});
+  }
+
+  var PRESETS = [500, 1000, 2000, 5000, 11000];
+  PRESETS.forEach(function (p) {
+    var b = el("button", "chip", inr(p)); b.type = "button";
+    b.onclick = function () { $("amount").value = String(p); markChips(); };
+    $("chips").appendChild(b);
+  });
+  function markChips() {
+    var v = Number($("amount").value);
+    Array.prototype.forEach.call($("chips").children, function (c, i) { c.classList.toggle("on", PRESETS[i] === v); });
+  }
+  $("amount").addEventListener("input", function () { this.value = this.value.replace(/\D/g, ""); markChips(); });
+  $("dreamSel").addEventListener("change", function () { selected = Number(this.value); render(); });
+
+  function readForm() {
+    var amount = Number($("amount").value);
+    var guest = $("guest").value.trim();
+    if (!amount || amount < 1) { showErr("Please choose or enter an amount."); return null; }
+    if (amount > 100000) { showErr("The maximum for one gift is ₹1,00,000."); return null; }
+    if (!guest) { showErr("Please enter your name so the couple can thank you."); return null; }
+    return { dreamId: Number($("dreamSel").value), amount: amount, guest: guest, message: $("message").value.trim() };
+  }
+
+  function setBusy(v) { busy = v; $("payOnline").disabled = v; $("payUpi").disabled = v; }
+
+  function thanks() {
+    showOk("Thank you! Your gift to " + state.coupleName + " is confirmed. 💛");
+    $("amount").value = ""; $("message").value = ""; markChips();
+    return refresh();
+  }
+
+  $("payOnline").onclick = function () {
+    if (busy) return;
+    var body = readForm(); if (!body) return;
+    showErr(""); setBusy(true);
+    api("POST", "/api/r/" + SLUG + "/contribute", body).then(function (o) {
+      if (typeof Razorpay === "undefined") throw new Error("Payment window could not load. Check your connection and try again.");
+      var rz = new Razorpay({
+        key: o.keyId, amount: o.amountPaise, currency: "INR",
+        name: o.coupleName, description: "Wedding gift · " + o.dreamTitle,
+        order_id: o.orderId, theme: { color: "#9C2A4A" },
+        handler: function (resp) {
+          api("POST", "/api/r/" + SLUG + "/verify", {
+            contributionId: o.contributionId,
+            razorpay_payment_id: resp.razorpay_payment_id,
+            razorpay_signature: resp.razorpay_signature
+          }).then(thanks).catch(function (e) {
+            // Payment succeeded at the bank; the webhook will still record it.
+            showOk("Payment received. It may take a moment to show up. (" + e.message + ")");
+          }).then(function () { setBusy(false); });
+        },
+        modal: { ondismiss: function () { setBusy(false); } }
+      });
+      rz.on("payment.failed", function (r) { showErr((r && r.error && r.error.description) || "Payment failed. Please try again."); setBusy(false); });
+      rz.open();
+    }).catch(function (e) { showErr(e.message); setBusy(false); });
+  };
+
+  $("payUpi").onclick = function () {
+    if (busy) return;
+    var body = readForm(); if (!body) return;
+    showErr(""); setBusy(true);
+    api("POST", "/api/r/" + SLUG + "/contribute-upi", body).then(function (o) {
+      var box = $("upibox");
+      box.style.display = "block";
+      box.textContent = "If your UPI app didn't open, pay " + inr(body.amount) + " to this UPI ID: " + o.upiId;
+      showOk("Once you've paid, " + state.coupleName + " will confirm your gift and it will appear on this page.");
+      $("amount").value = ""; $("message").value = ""; markChips();
+      window.location.href = o.upiLink;
+    }).catch(function (e) { showErr(e.message); }).then(function () { setBusy(false); });
+  };
+
+  refresh();
+  setInterval(function () { if (!document.hidden) refresh(); }, 6000);
+})();
+</script>
+</body>
+</html>

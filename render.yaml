@@ -1,0 +1,25 @@
+# Render Blueprint: New > Blueprint > pick this repo. Needs a paid instance because SQLite needs a persistent disk.
+services:
+  - type: web
+    name: dreamgift
+    runtime: docker
+    rootDir: backend
+    plan: starter
+    healthCheckPath: /healthz
+    disk:
+      name: dreamgift-data
+      mountPath: /data
+      sizeGB: 1
+    envVars:
+      - key: SUPPORT_EMAIL
+        sync: false
+      - key: RAZORPAY_KEY_ID
+        sync: false
+      - key: RAZORPAY_KEY_SECRET
+        sync: false
+      - key: RAZORPAY_WEBHOOK_SECRET
+        sync: false
+      - key: ADMIN_KEY
+        generateValue: true
+      - key: SETTLEMENT_MODE
+        value: route
